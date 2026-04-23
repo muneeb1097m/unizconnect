@@ -18,7 +18,11 @@ export const metadata: Metadata = {
   title: "UnizConnect — Is Your 2026 Study Abroad Plan Good Enough?",
   description: "British Council Certified study abroad consultancy. 99% Visa Success Rate. Professional guidance for UK, Canada, Germany, and Australia.",
   icons: {
-    icon: "/logo.png",
+    icon: [
+      { url: "/logo.png" },
+      { url: "/logo.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: "/logo.png",
   },
 };
 
