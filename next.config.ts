@@ -1,7 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'assets.cdn.filesafe.space',
+      },
+      {
+        protocol: 'https',
+        hostname: 'link.msgsndr.com',
+      }
+    ],
+  },
 };
 
 export default nextConfig;
