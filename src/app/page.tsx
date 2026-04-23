@@ -608,18 +608,18 @@ const MeetingAyesha = () => {
                 <p>None of this is by luck. It comes from a clear system I have refined over the past <span className="font-bold">9 years</span>, working with students across Pakistan, including from <span className="font-bold">LUMS, NUST, IBA, FAST, UET, Karachi University, Virtual University</span>, and public colleges in smaller cities.</p>
              </div>
 
-             <div className="bg-primary/3 rounded-2xl p-8 border border-primary/5 flex flex-wrap gap-8 justify-between">
+             <div className="bg-gradient-to-r from-[#4a0e8f] to-[#2a064f] rounded-xl p-8 border border-white/10 shadow-2xl flex flex-wrap gap-8 justify-between">
                 <div>
-                   <p className="text-secondary text-2xl font-black">£327k</p>
-                   <p className="text-[10px] font-bold uppercase tracking-widest text-dark/40">Scholarships</p>
+                   <p className="text-white text-2xl font-black">£327k</p>
+                   <p className="text-[10px] font-black uppercase tracking-widest text-white/80">Scholarships</p>
                 </div>
                 <div>
-                   <p className="text-primary text-2xl font-black">1000+</p>
-                   <p className="text-[10px] font-bold uppercase tracking-widest text-dark/40">Students</p>
+                   <p className="text-white text-2xl font-black">1000+</p>
+                   <p className="text-[10px] font-black uppercase tracking-widest text-white/80">Students</p>
                 </div>
                 <div>
-                   <p className="text-primary text-2xl font-black">99%</p>
-                   <p className="text-[10px] font-bold uppercase tracking-widest text-dark/40">Success</p>
+                   <p className="text-white text-2xl font-black">99%</p>
+                   <p className="text-[10px] font-black uppercase tracking-widest text-white/80">Success</p>
                 </div>
              </div>
           </motion.div>
