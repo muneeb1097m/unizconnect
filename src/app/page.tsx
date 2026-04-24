@@ -490,8 +490,8 @@ const ScrollVideoReveal = () => {
   };
 
   return (
-    <div ref={containerRef} className="relative h-[100vh] md:h-[130vh] bg-white">
-      <div className="sticky top-0 md:h-screen w-full flex items-center justify-center overflow-hidden py-10 md:py-0">
+    <div ref={containerRef} className="relative h-auto md:h-[130vh] bg-white">
+      <div className="relative md:sticky top-0 md:h-screen w-full flex items-center justify-center overflow-hidden py-12 md:py-0">
         <motion.div 
           style={{ scale: typeof window !== 'undefined' && window.innerWidth > 768 ? scale : 1, borderRadius: typeof window !== 'undefined' && window.innerWidth > 768 ? borderRadius : "16px" }}
           className="relative w-[92%] md:w-full h-auto md:h-full overflow-hidden shadow-2xl bg-black group cursor-pointer rounded-2xl md:rounded-none"
