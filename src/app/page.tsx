@@ -26,7 +26,7 @@ const STAGGER = (i: number) => ({
 
 // --- Shared Components ---
 const Section = ({ children, className = "", id = "" }: { children: React.ReactNode, className?: string, id?: string }) => (
-  <section id={id} className={`py-28 px-6 md:px-12 lg:px-24 overflow-hidden ${className}`}>
+  <section id={id} className={`py-16 md:py-28 px-6 md:px-12 lg:px-24 overflow-hidden ${className}`}>
     <div className="max-w-7xl mx-auto">
       {children}
     </div>
@@ -105,6 +105,8 @@ const DottedArrow = ({ className = "", color = "currentColor" }: { className?: s
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
@@ -112,41 +114,93 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-white/80 backdrop-blur-md py-4 shadow-[0_8px_32px_0_rgba(129,36,138,0.05)] border-b border-primary/5' : 'bg-transparent py-6'}`}>
-      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-        <div className="flex items-center cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <img src="/logo.png" alt="UnizConnect" className="h-10 w-auto" />
-        </div>
-        <div className="hidden md:flex items-center space-x-10">
-          {['About', 'Results', 'FAQ'].map((item) => (
-            <a 
-              key={item} 
-              href={`#${item.toLowerCase()}`} 
-              className="font-bold text-[13px] transition-colors uppercase tracking-[2px] text-[#4a0e8f]/70 hover:text-[#4a0e8f]"
+    <>
+      <nav className={`fixed top-0 left-0 right-0 z-[60] transition-all duration-500 ${scrolled || mobileMenuOpen ? 'bg-white/90 backdrop-blur-md py-4 shadow-[0_8px_32px_0_rgba(129,36,138,0.05)] border-b border-primary/5' : 'bg-transparent py-6'}`}>
+        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+          <div className="flex items-center cursor-pointer relative z-[70]" onClick={() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setMobileMenuOpen(false);
+          }}>
+            <img src="/logo.png" alt="UnizConnect" className="h-8 md:h-10 w-auto" />
+          </div>
+          
+          <div className="hidden lg:flex items-center space-x-10">
+            {['About', 'Results', 'FAQ', 'Booking'].map((item) => (
+              <a 
+                key={item} 
+                href={`#${item.toLowerCase()}`} 
+                className="font-bold text-[13px] transition-colors uppercase tracking-[2px] text-[#4a0e8f]/70 hover:text-[#4a0e8f]"
+              >
+                {item}
+              </a>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-4 relative z-[70]">
+            <motion.button 
+              initial={{ backgroundColor: "#81248a", color: "#ffffff" }}
+              whileHover={{ 
+                backgroundColor: "#ffffff", 
+                color: "#81248a",
+                scale: 1.05,
+                boxShadow: "0 10px 25px rgba(129, 36, 138, 0.2)"
+              }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="hidden sm:block px-6 py-2.5 rounded-md font-black text-[13px] uppercase tracking-widest transition-all border-2 border-primary"
+              onClick={() => {
+                document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' });
+                setMobileMenuOpen(false);
+              }}
             >
-              {item}
-            </a>
-          ))}
+              Book a Call
+            </motion.button>
+            
+            <button 
+              className="lg:hidden p-2 text-primary" 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-4">
-          <motion.button 
-            initial={{ backgroundColor: "#81248a", color: "#ffffff" }}
-            whileHover={{ 
-              backgroundColor: "#ffffff", 
-              color: "#81248a",
-              scale: 1.05,
-              boxShadow: "0 10px 25px rgba(129, 36, 138, 0.2)"
-            }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="px-6 py-2.5 rounded-md font-black text-[13px] uppercase tracking-widest transition-all border-2 border-primary"
-            onClick={() => document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' })}
+      </nav>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed inset-0 z-[55] bg-white pt-32 px-6 lg:hidden"
           >
-            Book a Call
-          </motion.button>
-        </div>
-      </div>
-    </nav>
+            <div className="flex flex-col space-y-6">
+              {['About', 'Results', 'FAQ', 'Booking'].map((item) => (
+                <a 
+                  key={item} 
+                  href={`#${item.toLowerCase()}`} 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="font-fraunces text-4xl font-black text-primary border-b border-primary/10 pb-4"
+                >
+                  {item}
+                </a>
+              ))}
+              <PrimaryButton 
+                lg 
+                className="w-full mt-8"
+                onClick={() => {
+                  document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' });
+                  setMobileMenuOpen(false);
+                }}
+              >
+                Book a Call
+              </PrimaryButton>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   )
 }
 
@@ -159,15 +213,15 @@ const Hero = () => {
       
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
         <motion.div initial="initial" whileInView="whileInView" viewport={{ once: true }}>
-          <h1 className="mb-8 font-fraunces font-black leading-[1.2] text-3xl md:text-5xl lg:text-6xl tracking-tight bg-gradient-to-r from-[#81248a] via-[#4a0e8f] to-[#81248a] bg-clip-text text-transparent">
+          <h1 className="mb-6 md:mb-8 font-fraunces font-black leading-[1.2] text-3xl md:text-5xl lg:text-6xl tracking-tight bg-gradient-to-r from-[#81248a] via-[#4a0e8f] to-[#81248a] bg-clip-text text-transparent">
             Before You Spend One More Rupee On Study Abroad FIX YOUR PLAN FIRST
           </h1>
           
-          <p className="text-dark/70 text-lg md:text-xl font-medium mb-10 leading-relaxed max-w-xl border-l-[12px] border-secondary/20 pl-8">
+          <p className="text-dark/70 text-base md:text-xl font-medium mb-8 md:mb-10 leading-relaxed max-w-xl border-l-[8px] md:border-l-[12px] border-secondary/20 pl-6 md:pl-8">
             The most expensive part of your study abroad journey is not the fee. It is wrong guidance that makes you lose scholarships, time and peace of mind.
           </p>
 
-          <p className="text-primary text-xl font-bold mb-12 bg-primary/3 inline-block px-8 py-5 rounded-[24px] border border-primary/10 shadow-[0_8px_32px_0_rgba(129,36,138,0.05)] backdrop-blur-md">
+          <p className="text-primary text-lg md:text-xl font-bold mb-10 md:mb-12 bg-primary/3 inline-block px-6 md:px-8 py-4 md:py-5 rounded-[20px] md:rounded-[24px] border border-primary/10 shadow-[0_8px_32px_0_rgba(129,36,138,0.05)] backdrop-blur-md">
             One Focused 1:1 Session That Can Save You Years Of Trial And Lacs Of Wasted Fees.
           </p>
           
@@ -204,13 +258,13 @@ const Hero = () => {
             </motion.button>
           </div>
 
-          <div className="flex flex-col gap-8">
-            <img src="/tmpsknjl26f.webp" alt="Successful Students" className="h-20 w-auto object-contain self-start drop-shadow-sm" />
-            <div className="flex items-center space-x-6 text-[14px] font-bold text-dark/40 uppercase tracking-[0.1em]">
+          <div className="flex flex-col gap-6 md:gap-8">
+            <img src="/tmpsknjl26f.webp" alt="Successful Students" className="h-16 md:h-20 w-auto object-contain self-start drop-shadow-sm" />
+            <div className="flex items-center space-x-4 md:space-x-6 text-[12px] md:text-[14px] font-bold text-dark/40 uppercase tracking-[0.1em]">
               <div className="flex text-[#ffb800]">
-                {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
+                {[...Array(5)].map((_, i) => <Star key={i} className="w-3 md:w-4 h-3 md:h-4 fill-current" />)}
               </div>
-              <span>5.0 Google Rating · 1,000+ Placements</span>
+              <span>5.0 Rating · 1,000+ Placements</span>
             </div>
           </div>
         </motion.div>
@@ -221,8 +275,8 @@ const Hero = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative"
         >
-          {/* Floating Illustrations & Icons - Repositioned to edges */}
-          <div className="absolute inset-0 z-30 pointer-events-none">
+          {/* Floating Illustrations & Icons */}
+          <div className="absolute inset-0 z-30 pointer-events-none hidden md:block">
             {[
               { t: "£327k+", d: "Scholarships Won", top: "-10%", left: "-10%", delay: 0 },
               { t: "1000+", d: "Students Guided", top: "20%", right: "-30%", delay: 1 },
@@ -254,16 +308,31 @@ const Hero = () => {
             ))}
           </div>
 
-          <div className="relative z-10 rounded-[40px] overflow-hidden">
+          {/* Mobile Badges Layout */}
+          <div className="grid grid-cols-2 gap-3 mt-12 md:hidden">
+            {[
+              { t: "£327k+", d: "Scholarships" },
+              { t: "1000+", d: "Students" },
+              { t: "99%", d: "Success" },
+              { t: "9 Years", d: "Experience" },
+            ].map((item, i) => (
+              <div key={i} className="bg-gradient-to-br from-[#4a0e8f] to-[#2a064f] p-4 rounded-xl border border-white/10 flex flex-col items-center text-center">
+                <p className="font-black text-lg text-white mb-1">{item.t}</p>
+                <p className="font-black uppercase tracking-widest text-[8px] text-white/70">{item.d}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="relative z-10 rounded-[24px] md:rounded-[40px] overflow-hidden">
             <img 
               src="/CEOimg.webp" 
               alt="Ayesha Saleem - Founder" 
               className="w-full h-auto object-cover aspect-[4/5]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-40" />
-            <div className="absolute bottom-8 left-8 text-white drop-shadow-2xl">
-              <p className="font-fraunces text-4xl md:text-5xl font-black mb-1">Ayesha Saleem</p>
-              <p className="text-white/90 font-black tracking-[4px] text-[11px] md:text-[13px] uppercase">Founder UnizConnect</p>
+            <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 text-white drop-shadow-2xl">
+              <p className="font-fraunces text-3xl md:text-5xl font-black mb-1">Ayesha Saleem</p>
+              <p className="text-white/90 font-black tracking-[2px] md:tracking-[4px] text-[10px] md:text-[13px] uppercase">Founder UnizConnect</p>
             </div>
           </div>
           {/* Decorative Elements */}
@@ -282,7 +351,7 @@ const LogoItem = ({ url, name }: { url: string, name: string }) => {
     <div 
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="flex-shrink-0 flex items-center justify-center h-24 px-16 md:px-24 relative min-w-[300px] md:min-w-[450px]"
+      className="flex-shrink-0 flex items-center justify-center h-20 md:h-24 px-8 md:px-24 relative min-w-[200px] md:min-w-[450px]"
     >
       <AnimatePresence mode="popLayout">
         {!isHovered ? (
@@ -421,11 +490,11 @@ const ScrollVideoReveal = () => {
   };
 
   return (
-    <div ref={containerRef} className="relative h-[130vh] bg-white">
-      <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
+    <div ref={containerRef} className="relative h-[100vh] md:h-[130vh] bg-white">
+      <div className="sticky top-0 md:h-screen w-full flex items-center justify-center overflow-hidden py-10 md:py-0">
         <motion.div 
-          style={{ scale, borderRadius }}
-          className="relative w-full h-full overflow-hidden shadow-2xl bg-black group cursor-pointer"
+          style={{ scale: typeof window !== 'undefined' && window.innerWidth > 768 ? scale : 1, borderRadius: typeof window !== 'undefined' && window.innerWidth > 768 ? borderRadius : "16px" }}
+          className="relative w-[92%] md:w-full h-auto md:h-full overflow-hidden shadow-2xl bg-black group cursor-pointer rounded-2xl md:rounded-none"
           onClick={togglePlay}
         >
           <video 
@@ -433,18 +502,18 @@ const ScrollVideoReveal = () => {
             src="https://assets.cdn.filesafe.space/B1KkpgABfPleeIPoYy8x/media/697b5bdbb3ae839f21a29faa.mp4"
             muted loop playsInline
             poster="https://assets.cdn.filesafe.space/B1KkpgABfPleeIPoYy8x/media/6928bdac571896657f6dba4d.png"
-            className="w-full h-full object-cover"
+            className="w-full h-auto md:h-full md:object-cover"
           />
           
           <div className="absolute inset-0 flex items-center justify-center bg-transparent transition-all pointer-events-none">
              <motion.div 
                animate={{ scale: isPlaying ? 0.8 : 1, opacity: isPlaying ? 0 : 1 }}
-               className="w-24 h-24 bg-white/10 backdrop-blur-2xl rounded-full flex items-center justify-center border border-white/20"
+               className="w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-2xl rounded-full flex items-center justify-center border border-white/20"
              >
                 {isPlaying ? (
-                  <Pause className="w-10 h-10 text-white fill-white" />
+                  <Pause className="w-8 h-8 md:w-10 md:h-10 text-white fill-white" />
                 ) : (
-                  <Play className="w-10 h-10 text-white fill-white ml-2" />
+                  <Play className="w-8 h-8 md:w-10 md:h-10 text-white fill-white ml-2" />
                 )}
              </motion.div>
           </div>
@@ -465,10 +534,10 @@ const ScrollVideoReveal = () => {
           >
              <div className="w-full h-1 md:h-1.5 bg-white/20 relative">
                 <motion.div 
-                  className="h-full bg-primary shadow-[0_0_20px_rgba(129,36,138,0.8)] relative"
-                  style={{ width: `${progress}%` }}
+                   className="h-full bg-primary shadow-[0_0_20px_rgba(129,36,138,0.8)] relative"
+                   style={{ width: `${progress}%` }}
                 >
-                   <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 md:w-4 md:h-4 bg-primary rounded-full shadow-lg scale-0 group-hover/scrub:scale-100 transition-transform" />
+                   <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 md:w-4 md:h-4 bg-primary rounded-full shadow-lg scale-0 md:group-hover/scrub:scale-100 transition-transform" />
                 </motion.div>
              </div>
           </div>
@@ -477,15 +546,15 @@ const ScrollVideoReveal = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={toggleMute}
-            className="absolute bottom-10 right-10 z-50 bg-primary/20 backdrop-blur-xl p-4 rounded-full text-white border border-white/20 hover:bg-primary/40 transition-all flex items-center gap-2 group/btn"
+            className="absolute bottom-4 right-4 md:bottom-10 md:right-10 z-50 bg-primary/20 backdrop-blur-xl p-2 md:p-4 rounded-full text-white border border-white/20 hover:bg-primary/40 transition-all flex items-center gap-2 group/btn"
           >
             {isMuted ? (
               <>
-                <VolumeX className="w-6 h-6" />
-                <span className="text-xs font-bold uppercase tracking-widest max-w-0 overflow-hidden group-hover/btn:max-w-xs transition-all duration-500 whitespace-nowrap">Unmute Intro</span>
+                <VolumeX className="w-5 h-5 md:w-6 md:h-6" />
+                <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest max-w-0 overflow-hidden md:group-hover/btn:max-w-xs transition-all duration-500 whitespace-nowrap">Unmute Intro</span>
               </>
             ) : (
-              <Volume2 className="w-6 h-6" />
+              <Volume2 className="w-5 h-5 md:w-6 md:h-6" />
             )}
           </motion.button>
         </motion.div>
@@ -535,12 +604,12 @@ const TargetAudience = () => {
                      delay: i * 0.2
                    }
                 }}
-                className="bg-gradient-to-br from-[#81248a] to-[#4a0e8f] hover:bg-none hover:bg-white p-8 rounded-2xl flex items-center gap-5 shadow-xl border border-white/10 hover:border-primary group h-full cursor-default transition-all duration-300"
+                className="bg-gradient-to-br from-[#81248a] to-[#4a0e8f] hover:bg-none hover:bg-white p-6 md:p-8 rounded-2xl flex items-center gap-4 md:gap-5 shadow-xl border border-white/10 hover:border-primary group h-full cursor-default transition-all duration-300"
               >
-                 <div className="bg-white/20 rounded-xl p-3 flex-shrink-0 group-hover:bg-primary/10 transition-colors">
-                    <Check className="w-5 h-5 text-white stroke-[3] group-hover:text-primary transition-colors" />
+                 <div className="bg-white/20 rounded-xl p-2.5 md:p-3 flex-shrink-0 group-hover:bg-primary/10 transition-colors">
+                    <Check className="w-4 md:w-5 h-4 md:h-5 text-white stroke-[3] group-hover:text-primary transition-colors" />
                  </div>
-                 <span className="text-white font-black uppercase tracking-widest text-sm leading-tight group-hover:text-primary transition-colors">{point}</span>
+                 <span className="text-white font-black uppercase tracking-widest text-xs md:text-sm leading-tight group-hover:text-primary transition-colors">{point}</span>
               </motion.div>
             </motion.div>
           ))}
