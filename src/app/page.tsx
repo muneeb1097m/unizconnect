@@ -125,7 +125,7 @@ const Navbar = () => {
           </div>
           
           <div className="hidden lg:flex items-center space-x-10">
-            {['About', 'Results', 'FAQ', 'Booking'].map((item) => (
+            {['About', 'Results', 'FAQ'].map((item) => (
               <a 
                 key={item} 
                 href={`#${item.toLowerCase()}`} 
@@ -176,7 +176,7 @@ const Navbar = () => {
             className="fixed inset-0 z-[55] bg-white pt-32 px-6 lg:hidden"
           >
             <div className="flex flex-col space-y-6">
-              {['About', 'Results', 'FAQ', 'Booking'].map((item) => (
+              {['About', 'Results', 'FAQ'].map((item) => (
                 <a 
                   key={item} 
                   href={`#${item.toLowerCase()}`} 
@@ -449,7 +449,10 @@ const ScrollVideoReveal = () => {
   const scale = useTransform(scrollYProgress, [0, 0.8], [0.8, 1]);
   const borderRadius = useTransform(scrollYProgress, [0, 0.8], ["32px", "0px"]);
 
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
+    setIsMounted(true);
     const video = videoRef.current;
     if (!video) return;
 
@@ -493,7 +496,10 @@ const ScrollVideoReveal = () => {
     <div ref={containerRef} className="relative h-auto md:h-[130vh] bg-white">
       <div className="relative md:sticky top-0 md:h-screen w-full flex items-center justify-center overflow-hidden py-12 md:py-0">
         <motion.div 
-          style={{ scale: typeof window !== 'undefined' && window.innerWidth > 768 ? scale : 1, borderRadius: typeof window !== 'undefined' && window.innerWidth > 768 ? borderRadius : "16px" }}
+          style={{ 
+            scale: isMounted && window.innerWidth > 768 ? scale : 1, 
+            borderRadius: isMounted && window.innerWidth > 768 ? borderRadius : "16px" 
+          }}
           className="relative w-[92%] md:w-full h-auto md:h-full overflow-hidden shadow-2xl bg-black group cursor-pointer rounded-2xl md:rounded-none"
           onClick={togglePlay}
         >
@@ -878,11 +884,12 @@ const DecisionBanner = () => (
 const FAQ = () => {
   const [open, setOpen] = useState<number | null>(null);
   const faqs = [
-    { q: "What exactly does UnizConnect do?", a: "UnizConnect provides expert guidance, resources, and strategic consulting for students aiming to secure fully funded international scholarships and study opportunities abroad." },
-    { q: "Which specific scholarships do you provide support for?", a: "We offer dedicated support and comprehensive promotional resources for highly competitive global programs, including the Chevening Scholarship, the Clarendon Fund, and the Gates Cambridge Scholarship." },
-    { q: "Do you assist with the application and submission process?", a: "Yes. We guide applicants through the entire process, from understanding the specific eligibility requirements of each scholarship to refining application materials so they stand out to selection committees." },
-    { q: "How do I know which scholarship is the right fit for me?", a: "We begin by assessing your academic background, professional experience, and future goals. This allows us to match you with the scholarship programs that perfectly align with your profile." },
-    { q: "Do you offer video or media support for applications?", a: "Yes, we assist with script development and media strategies (including reels and video submissions) for applications or promotional campaigns that require a strong visual presentation." }
+    { q: "What exactly will I get in this 1:1 Clarity Session?", a: "The session is a focused consultation where you receive a personalized study abroad and scholarship plan tailored to your profile. After the call, you will receive a custom meeting summary in your inbox, access to the \"Study Abroad Clarity\" framework, and the ability to ask free follow-up questions." },
+    { q: "I have a low CGPA or a study gap. Is this session still useful for me?", a: "Yes. The session is specifically designed for students with average grades or study gaps. Ayesha Saleem uses her 9 years of experience to help you find the best possible university and scholarship options that match your specific academic history." },
+    { q: "How is this different from talking to a regular education agent?", a: "Unlike traditional agents who may push specific universities based on commissions, this is a coaching-focused session. You are paying for expert guidance and a proven framework to help you avoid \"wrong guidance\" that often leads to wasted fees and lost scholarship opportunities." },
+    { q: "How do I book my spot and confirm my payment?", a: "To book, you must transfer the fee (currently Rs. 4,000) via online bank transfer to the Bank Alfalah account listed on the page. Once the transfer is done, take a screenshot, fill out the registration form on the website, and upload your payment proof. You will then receive access to the calendar to pick your slot." },
+    { q: "Can I join this session if I am a working professional or a parent?", a: "Absolutely. The session is perfect for working professionals looking to transition abroad, fresh graduates, and even concerned parents who want to understand the financial and academic roadmap for their children." },
+    { q: "Which countries and universities does Ayesha Saleem specialize in?", a: "While the framework is reusable for various applications, Ayesha Saleem is a British Council-certified counselor with a strong track record in the UK. Her students have secured offers from top-tier institutions including Imperial College, LSE, UCL, Manchester, and King’s College London." }
   ];
 
   return (

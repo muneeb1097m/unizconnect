@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #81248a;
-  --color-secondary: #8f7bbe;
+  --color-primary: #4a0e8f;
+  --color-secondary: #81248a;
   --color-off-white: #f8f5ff;
   --color-dark-purple: #1a0030;
   --color-dark: #0d0d0d;
@@ -10,7 +10,7 @@
   --font-plus-jakarta: var(--font-plus-jakarta), sans-serif;
   --font-fraunces: var(--font-fraunces), serif;
   
-  --shadow-premium: 0 20px 40px rgba(129, 36, 138, 0.15);
+  --shadow-premium: 0 20px 40px rgba(74, 14, 143, 0.15);
 }
 
 :root {
@@ -34,20 +34,20 @@ body {
   -webkit-backdrop-filter: blur(18px);
   border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 20px;
-  box-shadow: 0 8px 40px rgba(129, 36, 138, 0.18);
+  box-shadow: 0 8px 40px rgba(74, 14, 143, 0.18);
 }
 
 /* Gradients */
 .bg-primary-gradient {
-  background: linear-gradient(135deg, #81248a 0%, #8f7bbe 100%);
+  background: linear-gradient(135deg, #4a0e8f 0%, #81248a 100%);
 }
 
 .bg-dark-gradient {
-  background: linear-gradient(160deg, #1a0030 0%, #81248a 100%);
+  background: linear-gradient(160deg, #1a0030 0%, #4a0e8f 100%);
 }
 
 .text-primary-gradient {
-  background: linear-gradient(135deg, #81248a 0%, #8f7bbe 100%);
+  background: linear-gradient(135deg, #4a0e8f 0%, #81248a 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
