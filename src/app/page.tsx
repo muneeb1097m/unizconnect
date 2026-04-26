@@ -769,11 +769,11 @@ const MeetingAyesha = () => {
 const GoogleReviews = () => {
     const reviews = [
         { name: "Bilal Ahmed", role: "", content: "Ayesha ma'am is incredible. She saved me from a £3000 mistake that another consultant was pushing. Best clarity session ever!", date: "2 months ago" },
-        { name: "Fatima Zahra", role: "Canada Applicant", content: "The roadmap provided was so detailed. I finally understood the 2026 rule changes that were confusing me. Very professional.", date: "1 month ago" },
+        { name: "Fatima Zahra", role: "", content: "The roadmap provided was so detailed. I finally understood the 2026 rule changes that were confusing me. Very professional.", date: "1 month ago" },
         { name: "Zainab Malik", role: "", content: "Got my visa within 15 days using the UnizConnect framework. The SOP guidance is top-tier and very personalized.", date: "3 months ago" },
-        { name: "Hamza Sheikh", role: "Scholarship Winner", content: "Highly recommended for anyone looking for honest advice. No fake promises, just real data and rule-based guidance.", date: "2 weeks ago" },
+        { name: "Hamza Sheikh", role: "", content: "Highly recommended for anyone looking for honest advice. No fake promises, just real data and rule-based guidance.", date: "2 weeks ago" },
         { name: "Sara Khan", role: "", content: "The block account and APS process was so smooth with their help. Truly British Council standard service.", date: "5 months ago" },
-        { name: "Usman Ali", role: "Australia Applicant", content: "If you are confused about which country to pick, just book one session here. It clears everything in 30 minutes.", date: "1 month ago" }
+        { name: "Usman Ali", role: "", content: "If you are confused about which country to pick, just book one session here. It clears everything in 30 minutes.", date: "1 month ago" }
     ];
 
     return (
