@@ -263,7 +263,7 @@ export default function CustomBookingForm() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.05 }}
-              className="space-y-6"
+              className="space-y-6 will-change-transform"
             >
               <div className="mb-10 text-center">
                 <h3 className="font-fraunces text-4xl text-dark mb-3">Who are you?</h3>
@@ -327,7 +327,7 @@ export default function CustomBookingForm() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.05 }}
-              className="space-y-6"
+              className="space-y-6 will-change-transform"
             >
               <div className="mb-10 text-center">
                 <h3 className="font-fraunces text-4xl text-dark mb-3">Your Background</h3>
@@ -399,7 +399,7 @@ export default function CustomBookingForm() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.05 }}
-              className="space-y-6"
+              className="space-y-6 will-change-transform"
             >
               <div className="mb-8 text-center">
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-50 text-green-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 mx-auto">

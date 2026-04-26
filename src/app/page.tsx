@@ -1,6 +1,8 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, memo, useMemo } from 'react'
+import Image from 'next/image'
+import dynamic from 'next/dynamic'
 import { 
   Users, Award, Globe as GlobeIcon, CheckCircle2, XCircle, 
   Phone, Mail, MapPin, Star, Play, 
@@ -9,7 +11,15 @@ import {
   MessageCircle, Menu, ClipboardList, Volume2, VolumeX, Pause
 } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useTransform, useInView, useSpring } from 'framer-motion'
-import GHLForm from '@/components/GHLForm'
+// import GHLForm from '@/components/GHLForm'
+
+// Lazy load heavy components
+const CustomBookingForm = dynamic(() => import('@/components/CustomBookingForm'), {
+  loading: () => <div className="w-full h-[600px] bg-white/5 animate-pulse rounded-[32px]" />,
+  ssr: false
+});
+
+const GHLForm = dynamic(() => import('@/components/GHLForm'), { ssr: false });
 
 // --- Animation Variants ---
 const FADE_UP = {
@@ -25,23 +35,25 @@ const STAGGER = (i: number) => ({
 })
 
 // --- Shared Components ---
-const Section = ({ children, className = "", id = "" }: { children: React.ReactNode, className?: string, id?: string }) => (
+const Section = memo(({ children, className = "", id = "" }: { children: React.ReactNode, className?: string, id?: string }) => (
   <section id={id} className={`py-16 md:py-28 px-6 md:px-12 lg:px-24 overflow-hidden ${className}`}>
     <div className="max-w-7xl mx-auto">
       {children}
     </div>
   </section>
-)
+))
+Section.displayName = "Section";
 
-const Eyebrow = ({ children, white = false }: { children: React.ReactNode, white?: boolean }) => (
+const Eyebrow = memo(({ children, white = false }: { children: React.ReactNode, white?: boolean }) => (
   <motion.div 
     {...FADE_UP}
-    className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[12px] font-bold tracking-[2px] uppercase mb-8 border ${white ? 'bg-white/10 text-white border-white/20' : 'bg-primary/10 text-primary border-primary/20'}`}
+    className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[12px] font-bold tracking-[2px] uppercase mb-8 border ${white ? 'bg-white/10 text-white border-white/20' : 'bg-primary/10 text-primary border-primary/20'} will-change-transform`}
   >
     <div className={`w-1.5 h-1.5 rounded-full ${white ? 'bg-white' : 'bg-primary'} animate-pulse`} />
     {children}
   </motion.div>
-)
+))
+Eyebrow.displayName = "Eyebrow";
 
 const PrimaryButton = ({ children, className = "", onClick, lg = false }: { children: React.ReactNode, className?: string, onClick?: () => void, lg?: boolean }) => (
   <motion.button 
@@ -121,7 +133,14 @@ const Navbar = () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
             setMobileMenuOpen(false);
           }}>
-            <img src="/logo.png" alt="UnizConnect" className="h-8 md:h-10 w-auto" />
+            <Image 
+              src="/logo.png" 
+              alt="UnizConnect" 
+              width={160} 
+              height={40} 
+              className="h-8 md:h-10 w-auto object-contain" 
+              priority
+            />
           </div>
           
           <div className="hidden lg:flex items-center space-x-10">
@@ -208,8 +227,8 @@ const Hero = () => {
   return (
     <section className="relative pt-32 pb-24 px-6 md:px-12 lg:px-24 overflow-hidden bg-[#81248a]/[0.02]">
       {/* Optimized Background Blobs */}
-      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none will-change-[filter]" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2 pointer-events-none will-change-[filter]" />
       
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
         <motion.div initial="initial" whileInView="whileInView" viewport={{ once: true }}>
@@ -259,7 +278,14 @@ const Hero = () => {
           </div>
 
           <div className="flex flex-col gap-6 md:gap-8">
-            <img src="/tmpsknjl26f.webp" alt="Successful Students" className="h-16 md:h-20 w-auto object-contain self-start drop-shadow-sm" />
+            <Image 
+              src="/tmpsknjl26f.webp" 
+              alt="Successful Students" 
+              width={200} 
+              height={80} 
+              className="h-16 md:h-20 w-auto object-contain self-start drop-shadow-sm" 
+              priority
+            />
             <div className="flex items-center space-x-4 md:space-x-6 text-[12px] md:text-[14px] font-bold text-dark/40 uppercase tracking-[0.1em]">
               <div className="flex text-[#ffb800]">
                 {[...Array(5)].map((_, i) => <Star key={i} className="w-3 md:w-4 h-3 md:h-4 fill-current" />)}
@@ -295,7 +321,7 @@ const Hero = () => {
                    delay: item.delay 
                 }}
                 style={{ top: item.top, left: item.left, right: item.right, bottom: item.bottom }}
-                className="absolute bg-gradient-to-br from-[#4a0e8f] to-[#2a064f] p-4 rounded-lg shadow-2xl border border-white/10 flex items-center gap-3 min-w-[200px] z-50 text-white"
+                className="absolute bg-gradient-to-br from-[#4a0e8f] to-[#2a064f] p-4 rounded-lg shadow-2xl border border-white/10 flex items-center gap-3 min-w-[200px] z-50 text-white will-change-transform"
               >
                 <div className="bg-white/20 rounded-md p-2 flex-shrink-0">
                   <Check className="w-4 h-4 text-white stroke-[4]" />
@@ -324,10 +350,13 @@ const Hero = () => {
           </div>
 
           <div className="relative z-10 rounded-[24px] md:rounded-[40px] overflow-hidden">
-            <img 
+            <Image 
               src="/CEOimg.webp" 
               alt="Ayesha Saleem - Founder" 
-              className="w-full h-auto object-cover aspect-[4/5]"
+              width={800}
+              height={1000}
+              className="w-full h-auto object-cover aspect-[4/5] will-change-transform"
+              priority
             />
             <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent opacity-40" />
             <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 text-white drop-shadow-2xl">
@@ -344,7 +373,7 @@ const Hero = () => {
   )
 }
 
-const LogoItem = ({ url, name }: { url: string, name: string }) => {
+const LogoItem = memo(({ url, name }: { url: string, name: string }) => {
   const [isHovered, setIsHovered] = useState(false);
   
   return (
@@ -360,7 +389,7 @@ const LogoItem = ({ url, name }: { url: string, name: string }) => {
             initial={{ opacity: 0, filter: 'blur(4px)', scale: 0.95 }}
             animate={{ opacity: 1, filter: 'blur(0px)', scale: 1 }}
             exit={{ opacity: 0, filter: 'blur(4px)', scale: 1.05 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
             className="font-fraunces text-xl md:text-2xl font-black text-[#4a0e8f] whitespace-nowrap block"
           >
             {name}
@@ -371,12 +400,14 @@ const LogoItem = ({ url, name }: { url: string, name: string }) => {
             initial={{ opacity: 0, scale: 0.8, filter: 'blur(4px)' }}
             animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
             exit={{ opacity: 0, scale: 0.8, filter: 'blur(4px)' }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
             className="flex items-center justify-center"
           >
-            <img 
+            <Image 
               src={url} 
               alt={name} 
+              width={280}
+              height={80}
               className="h-10 md:h-16 w-auto object-contain max-w-[180px] md:max-w-[280px]"
             />
           </motion.div>
@@ -384,10 +415,11 @@ const LogoItem = ({ url, name }: { url: string, name: string }) => {
       </AnimatePresence>
     </div>
   );
-};
+});
+LogoItem.displayName = "LogoItem";
 
-const LogoBar = () => {
-  const logos = [
+const LogoBar = memo(() => {
+  const logos = useMemo(() => [
     { name: "King's College London", url: "/kings college london.png" },
     { name: "University of Edinburgh", url: "/iuniversity of edinburgh.png" },
     { name: "University of Sheffield", url: "/university of sheffield.png" },
@@ -396,31 +428,43 @@ const LogoBar = () => {
     { name: "University of Kent", url: "/univeresity of kent.png" },
     { name: "Queen Mary University", url: "/queen marry univeristy of london.png" },
     { name: "University of Liverpool", url: "/university of liverpool1.png" },
-  ];
+  ], []);
+
+  const displayLogos = useMemo(() => [...logos, ...logos, ...logos], [logos]);
 
   return (
     <div className="bg-[#81248a]/[0.02] border-y border-primary/10 py-12 overflow-hidden relative shadow-sm cursor-default">
+        <style dangerouslySetInnerHTML={{ __html: `
+          @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .animate-scroll {
+            animation: scroll 40s linear infinite;
+            will-change: transform;
+          }
+          .animate-scroll:hover {
+            animation-play-state: paused;
+          }
+        `}} />
         <p className="text-center text-[#4a0e8f]/40 text-[10px] uppercase font-bold tracking-[0.5em] mb-12">
           Students Placed At Leading Institutions
         </p>
         
         <div className="flex overflow-hidden relative w-full">
-          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white to-transparent z-10" />
-          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white to-transparent z-10" />
+          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
           
-          <motion.div 
-            animate={{ x: ["0%", "-50%"] }} 
-            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            className="flex flex-nowrap items-center"
-          >
-            {[...logos, ...logos, ...logos].map((logo, i) => (
+          <div className="flex flex-nowrap items-center animate-scroll">
+            {displayLogos.map((logo, i) => (
               <LogoItem key={i} url={logo.url} name={logo.name} />
             ))}
-          </motion.div>
+          </div>
         </div>
     </div>
   );
-}
+});
+LogoBar.displayName = "LogoBar";
 
 
 const VideoIntro = () => (
@@ -610,7 +654,7 @@ const TargetAudience = () => {
                      delay: i * 0.2
                    }
                 }}
-                className="bg-gradient-to-br from-[#81248a] to-[#4a0e8f] hover:bg-none hover:bg-white p-6 md:p-8 rounded-2xl flex items-center gap-4 md:gap-5 shadow-xl border border-white/10 hover:border-primary group h-full cursor-default transition-all duration-300"
+                className="bg-gradient-to-br from-[#81248a] to-[#4a0e8f] hover:bg-none hover:bg-white p-6 md:p-8 rounded-2xl flex items-center gap-4 md:gap-5 shadow-xl border border-white/10 hover:border-primary group h-full cursor-default transition-all duration-300 will-change-transform"
               >
                  <div className="bg-white/20 rounded-xl p-2.5 md:p-3 flex-shrink-0 group-hover:bg-primary/10 transition-colors">
                     <Check className="w-4 md:w-5 h-4 md:h-5 text-white stroke-[3] group-hover:text-primary transition-colors" />
@@ -658,7 +702,7 @@ const MeetingAyeshaVideo = () => {
         ref={videoRef}
         src="https://framerusercontent.com/assets/VzY8HkGfP0e6NqK5pL6f.mp4"
         loop muted playsInline
-        className="w-full h-auto"
+        className="w-full h-auto will-change-transform"
       />
     </div>
   );
@@ -701,7 +745,13 @@ const MeetingAyesha = () => {
 
           <div className="relative group flex justify-center">
              <div className="relative bg-white p-4 md:p-8 rounded-[40px] shadow-2xl border border-primary/10 max-w-lg overflow-hidden transition-all group-hover:shadow-[0_60px_100px_-20px_rgba(129,36,138,0.2)]">
-                <img src="/certificate.webp" alt="British Council Certification" className="w-full h-auto rounded-2xl" />
+                <Image 
+                  src="/certificate.webp" 
+                  alt="British Council Certification" 
+                  width={600}
+                  height={800}
+                  className="w-full h-auto rounded-2xl" 
+                />
                 <div className="absolute top-0 right-0 p-6">
                    <div className="bg-primary/90 backdrop-blur-md px-4 py-2 rounded-full flex items-center gap-2 shadow-lg">
                       <Award className="w-4 h-4 text-white" />
@@ -718,11 +768,11 @@ const MeetingAyesha = () => {
 
 const GoogleReviews = () => {
     const reviews = [
-        { name: "Bilal Ahmed", role: "UK Student", content: "Ayesha ma'am is incredible. She saved me from a £3000 mistake that another consultant was pushing. Best clarity session ever!", date: "2 months ago" },
+        { name: "Bilal Ahmed", role: "", content: "Ayesha ma'am is incredible. She saved me from a £3000 mistake that another consultant was pushing. Best clarity session ever!", date: "2 months ago" },
         { name: "Fatima Zahra", role: "Canada Applicant", content: "The roadmap provided was so detailed. I finally understood the 2026 rule changes that were confusing me. Very professional.", date: "1 month ago" },
-        { name: "Zainab Malik", role: "Masters Student", content: "Got my visa within 15 days using the UnizConnect framework. The SOP guidance is top-tier and very personalized.", date: "3 months ago" },
+        { name: "Zainab Malik", role: "", content: "Got my visa within 15 days using the UnizConnect framework. The SOP guidance is top-tier and very personalized.", date: "3 months ago" },
         { name: "Hamza Sheikh", role: "Scholarship Winner", content: "Highly recommended for anyone looking for honest advice. No fake promises, just real data and rule-based guidance.", date: "2 weeks ago" },
-        { name: "Sara Khan", role: "Germany Aspirant", content: "The block account and APS process was so smooth with their help. Truly British Council standard service.", date: "5 months ago" },
+        { name: "Sara Khan", role: "", content: "The block account and APS process was so smooth with their help. Truly British Council standard service.", date: "5 months ago" },
         { name: "Usman Ali", role: "Australia Applicant", content: "If you are confused about which country to pick, just book one session here. It clears everything in 30 minutes.", date: "1 month ago" }
     ];
 
@@ -732,7 +782,13 @@ const GoogleReviews = () => {
                 <Eyebrow>Student Proof</Eyebrow>
                 <h2 className="font-fraunces text-center">Unfiltered Success Stories</h2>
                 <div className="flex items-center justify-center gap-2 mt-6">
-                    <img src="/logo.png" className="h-6 opacity-20 grayscale" alt="" />
+                    <Image 
+                      src="/logo.png" 
+                      alt="UnizConnect" 
+                      width={100}
+                      height={24}
+                      className="h-6 w-auto opacity-20 grayscale object-contain" 
+                    />
                     <div className="flex text-[#ffb800]">
                         {[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 fill-current" />)}
                     </div>
@@ -749,7 +805,7 @@ const GoogleReviews = () => {
                         viewport={{ once: true, margin: "-50px" }}
                         transition={{ duration: 0.5, delay: idx * 0.05 }}
                         whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                        className="break-inside-avoid bg-white p-8 rounded-[24px] border border-primary/5 shadow-sm hover:shadow-xl transition-shadow duration-300"
+                        className="break-inside-avoid bg-white p-8 rounded-[24px] border border-primary/5 shadow-sm hover:shadow-xl transition-shadow duration-300 will-change-transform"
                     >
                         <div className="flex items-center gap-4 mb-6">
                             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center font-black text-primary">
@@ -757,7 +813,9 @@ const GoogleReviews = () => {
                             </div>
                             <div>
                                 <h4 className="font-black text-dark leading-none text-sm uppercase tracking-wider">{review.name}</h4>
-                                <p className="text-[10px] text-muted uppercase tracking-[0.2em] font-black mt-1">{review.role}</p>
+                                {review.role && (
+                                    <p className="text-[10px] text-muted uppercase tracking-[0.2em] font-black mt-1">{review.role}</p>
+                                )}
                             </div>
                         </div>
                         <div className="flex text-[#ffb800] mb-4">
@@ -797,7 +855,7 @@ const SocialSpotlight = () => (
         <p className="text-dark/70 text-lg mb-10 leading-relaxed max-w-md">
           Join our community on Instagram where we share the rule changes that no one else talks about.
         </p>
-        <PrimaryButton onClick={() => window.open('https://instagram.com/unizconnect', '_blank')}>
+        <PrimaryButton onClick={() => window.open('https://www.instagram.com/unizconnect', '_blank')}>
           FOLLOW ON INSTAGRAM
         </PrimaryButton>
       </motion.div>
@@ -852,7 +910,7 @@ const FeaturedVideo = () => (
           src="https://assets.cdn.filesafe.space/B1KkpgABfPleeIPoYy8x/media/697b53931fd827b16f93bd14.mp4"
           controls
           className="w-full h-full object-cover"
-          poster="https://assets.cdn.filesafe.space/B1KkpgABfPleeIPoYy8x/media/6928400222c9d64caf800f54.png"
+          poster="https://assets.cdn.filesafe.space/B1KkpgABfPleeIPoYy8x/media/6928bdac8f8797020ea4fc35.png"
         />
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/20 to-transparent" />
       </motion.div>
@@ -949,8 +1007,8 @@ export default function LandingPage() {
       <Section id="booking" className="bg-gradient-to-b from-white to-off-white relative overflow-hidden">
         {/* Background Decorative Elements */}
         <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
-           <div className="absolute top-[10%] left-[5%] w-96 h-96 bg-primary rounded-full blur-[120px]" />
-           <div className="absolute bottom-[10%] right-[5%] w-96 h-96 bg-primary rounded-full blur-[120px]" />
+           <div className="absolute top-[10%] left-[5%] w-96 h-96 bg-primary rounded-full blur-[120px] will-change-[filter]" />
+           <div className="absolute bottom-[10%] right-[5%] w-96 h-96 bg-primary rounded-full blur-[120px] will-change-[filter]" />
         </div>
 
         <div className="max-w-6xl mx-auto relative z-10 px-6">
@@ -1038,8 +1096,8 @@ export default function LandingPage() {
                 transition={{ delay: 0.2 }}
                 className="lg:col-span-7"
               >
-                 <div className="bg-white p-2 rounded-xl shadow-[0_20px_60px_-15px_rgba(129,36,138,0.15)] border border-primary/5 overflow-hidden">
-                    <GHLForm />
+                 <div className="bg-white p-2 rounded-xl shadow-[0_20px_60px_-15px_rgba(129,36,138,0.15)] border border-primary/5 overflow-hidden min-h-[400px]">
+                    <CustomBookingForm />
                  </div>
               </motion.div>
            </div>
@@ -1048,8 +1106,8 @@ export default function LandingPage() {
       <FAQ />
       <section className="py-32 bg-gradient-to-br from-[#81248a] via-[#4a0e8f] to-[#2e0958] text-white text-center px-6 relative overflow-hidden">
          {/* Deep Branded Decorative Elements */}
-         <div className="absolute -top-20 -left-20 w-[600px] h-[600px] bg-primary opacity-20 rounded-full blur-[150px] pointer-events-none" />
-         <div className="absolute -bottom-20 -right-20 w-[600px] h-[600px] bg-[#4a0e8f] opacity-30 rounded-full blur-[150px] pointer-events-none" />
+         <div className="absolute -top-20 -left-20 w-[600px] h-[600px] bg-primary opacity-20 rounded-full blur-[150px] pointer-events-none will-change-[filter]" />
+         <div className="absolute -bottom-20 -right-20 w-[600px] h-[600px] bg-[#4a0e8f] opacity-30 rounded-full blur-[150px] pointer-events-none will-change-[filter]" />
          
          <motion.h2 
            initial={{ opacity: 0, y: 20 }}
@@ -1060,6 +1118,6 @@ export default function LandingPage() {
            TWO YEARS FROM NOW, YOU WILL EITHER THANK YOURSELF FOR BOOKING THIS SESSION OR WISH YOU HAD
          </motion.h2>
       </section>
-    </main>
+          </main>
   )
 }
